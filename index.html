@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShortFilm Hub - รวมหนังสั้นสนุกๆ อัปโหลดและรับชมได้ฟรี</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Prompt & Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            green: '#10B981',
+                            greenDark: '#059669',
+                            greenLight: '#D1FAE5',
+                            yellowLight: '#FEF9C3',
+                            yellow: '#FDE047',
+                            yellowDark: '#EAB308',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #F8FAFC;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10B981;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 bg-slate-50">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-emerald-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-green to-brand-yellow flex items-center justify-center text-white text-xl shadow-md shadow-emerald-200">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-slate-800">ShortFilm <span class="text-brand-green">Hub</span></h1>
+                    <p class="text-[10px] text-slate-500 font-medium">ชุมชนหนังสั้น & ครีเอเตอร์</p>
+                </div>
+            </div>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-4">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ค้นหาชื่อหนังสั้น, ผู้กำกับ..." 
+                           class="w-full bg-slate-100/80 border border-slate-200 text-sm rounded-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-green focus:bg-white transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                </div>
+            </div>
+
+            <!-- Upload Button -->
+            <div class="flex items-center gap-3">
+                <button onclick="openUploadModal()" class="flex items-center gap-2 bg-gradient-to-r from-brand-green to-emerald-600 hover:from-brand-greenDark hover:to-emerald-700 text-white font-medium px-4 sm:px-5 py-2.5 rounded-full shadow-md shadow-emerald-200 transition-all hover:scale-105 active:scale-95 text-sm">
+                    <i class="fa-solid fa-cloud-arrow-up text-brand-yellowLight"></i>
+                    <span>อัปโหลดหนังสั้น</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Bar (Mobile) -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <input type="text" id="mobileSearchInput" oninput="handleMobileSearch()" placeholder="ค้นหาหนังสั้น..." 
+                       class="w-full bg-slate-100 border border-slate-200 text-sm rounded-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-green">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="bg-gradient-to-b from-brand-greenLight/50 via-brand-yellowLight/30 to-slate-50 border-b border-emerald-50 py-8 md:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow text-slate-800 shadow-sm">
+                <i class="fa-solid fa-sparkles text-amber-600"></i> พื้นที่ปล่อยของคนรักหนังสั้น
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                แบ่งปันเรื่องราว <span class="text-brand-green">ผ่านเลนส์หนังสั้นของคุณ</span>
+            </h2>
+            <p class="text-slate-600 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+                ไม่ว่าจะเป็นหนังสั้นแนวตลก ดราม่า สยองขวัญ หรือผลงานทดลอง อัปโหลดไฟล์วิดีโอจากเครื่อง หรือแชร์ลิงก์เพื่อสร้างแรงบันดาลใจให้ผู้คนได้ทันที
+            </p>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        
+        <!-- CATEGORY FILTERS -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+            <button onclick="filterCategory('all')" id="btn-all" class="category-btn active px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-brand-green text-white shadow-sm transition-all">
+                🎬 ทั้งหมด
+            </button>
+            <button onclick="filterCategory('comedy')" id="btn-comedy" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                😂 ตลก / Comedy
+            </button>
+            <button onclick="filterCategory('drama')" id="btn-drama" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                🎭 ดราม่า / Drama
+            </button>
+            <button onclick="filterCategory('horror')" id="btn-horror" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                👻 สยองขวัญ / Horror
+            </button>
+            <button onclick="filterCategory('action')" id="btn-action" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                💥 แอ็กชัน / Action
+            </button>
+            <button onclick="filterCategory('romantic')" id="btn-romantic" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                💖 โรแมนติก / Romantic
+            </button>
+            <button onclick="filterCategory('scifi')" id="btn-scifi" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                🚀 ไซไฟ / Sci-Fi
+            </button>
+            <button onclick="filterCategory('animation')" id="btn-animation" class="category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all">
+                🎨 แอนิเมชัน / Animation
+            </button>
+        </div>
+
+        <!-- FILMS GRID -->
+        <div id="filmsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic Film Cards Inserted via JS -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden text-center py-16 space-y-4">
+            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400 text-3xl">
+                <i class="fa-solid fa-video-slash"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-700">ไม่พบหนังสั้นที่ค้นหา</h3>
+            <p class="text-sm text-slate-500">ลองเปลี่ยนคำค้นหา หรือเป็นคนแรกที่อัปโหลดหนังสั้นหมวดหมู่นี้!</p>
+            <button onclick="openUploadModal()" class="inline-flex items-center gap-2 bg-brand-green text-white text-xs font-semibold px-4 py-2 rounded-full shadow hover:bg-brand-greenDark">
+                <i class="fa-solid fa-plus"></i> อัปโหลดเลย
+            </button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 ShortFilm Hub. แพลตฟอร์มเปิดสำหรับคนรักการสร้างสรรค์หนังสั้น</p>
+        </div>
+    </footer>
+
+    <!-- UPLOAD MODAL -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 my-auto">
+            
+            <!-- Modal Header -->
+            <div class="p-5 bg-gradient-to-r from-brand-green to-emerald-600 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-brand-yellow">
+                        <i class="fa-solid fa-clapperboard"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">อัปโหลดหนังสั้นเรื่องใหม่</h3>
+                </div>
+                <button onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Upload Form -->
+            <form id="uploadForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+                
+                <!-- Source Tabs -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2">รูปแบบการเพิ่มวิดีโอ <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
+                        <button type="button" id="tabLocal" onclick="switchUploadTab('local')" 
+                                class="py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm">
+                            <i class="fa-solid fa-folder-open"></i> เลือกไฟล์จากเครื่อง
+                        </button>
+                        <button type="button" id="tabUrl" onclick="switchUploadTab('url')" 
+                                class="py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700">
+                            <i class="fa-solid fa-link"></i> ลิงก์วิดีโอ / YouTube
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Local File Area -->
+                <div id="localUploadSection" class="p-5 bg-emerald-50/50 border-2 border-dashed border-emerald-300 rounded-2xl text-center">
+                    <input type="file" id="localVideoFile" accept="video/*" class="hidden" onchange="handleFileSelect(event)">
+                    
+                    <div id="uploadDropzone" onclick="document.getElementById('localVideoFile').click()" class="cursor-pointer space-y-2 py-2">
+                        <div class="w-12 h-12 rounded-full bg-emerald-100 text-brand-green flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-file-video"></i>
+                        </div>
+                        <div class="text-xs text-slate-600">
+                            <span class="font-bold text-brand-green">คลิกเพื่อเลือกไฟล์วิดีโอ</span> จากแกลลอรีหรือไดรฟ์
+                        </div>
+                        <p class="text-[11px] text-slate-400">รองรับไฟล์ MP4, WebM, MOV, AVI</p>
+                    </div>
+
+                    <div id="fileInfoBox" class="hidden flex items-center justify-between p-3 bg-white rounded-xl border border-emerald-200">
+                        <div class="flex items-center gap-3 text-left truncate">
+                            <i class="fa-solid fa-circle-check text-brand-green text-lg"></i>
+                            <div class="truncate">
+                                <p id="fileName" class="text-xs font-bold text-slate-700 truncate">video.mp4</p>
+                                <p id="fileSize" class="text-[10px] text-slate-400">0 MB</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeSelectedFile()" class="text-rose-500 hover:text-rose-700 p-1 text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- URL Section -->
+                <div id="urlUploadSection" class="hidden p-4 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700">วางลิงก์วิดีโอ (YouTube หรือ Direct Video URL)</label>
+                    <input type="url" id="filmVideoUrl" placeholder="https://www.youtube.com/watch?v=... หรือ https://.../video.mp4" 
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green bg-white">
+                </div>
+
+                <!-- Title & Genre -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อเรื่องหนังสั้น <span class="text-rose-500">*</span></label>
+                        <input type="text" id="filmTitle" required placeholder="เช่น ย้อนเวลาหาความรัก" 
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">แนวหนัง (Genre) <span class="text-rose-500">*</span></label>
+                        <select id="filmGenre" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green bg-white">
+                            <option value="">-- เลือกแนวหนัง --</option>
+                            <option value="comedy">😂 ตลก / Comedy</option>
+                            <option value="drama">🎭 ดราม่า / Drama</option>
+                            <option value="action">💥 แอ็กชัน / Action</option>
+                            <option value="horror">👻 สยองขวัญ / Horror</option>
+                            <option value="romantic">💖 โรแมนติก / Romantic</option>
+                            <option value="scifi">🚀 ไซไฟ / Sci-Fi</option>
+                            <option value="animation">🎨 แอนิเมชัน / Animation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Director & Duration -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ผู้กำกับ / ผู้สร้าง <span class="text-rose-500">*</span></label>
+                        <input type="text" id="filmDirector" required placeholder="ชื่อผู้กำกับ หรือ ชื่อทีมงาน" 
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ความยาว (เช่น 05:30)</label>
+                        <input type="text" id="filmDuration" placeholder="คำนวณอัตโนมัติ หรือ กรอกเอง" 
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green">
+                    </div>
+                </div>
+
+                <!-- Synopsis -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">เรื่องย่อ (Synopsis)</label>
+                    <textarea id="filmSynopsis" rows="3" placeholder="สรุปเรื่องราวสั้นๆ ความน่าสนใจของเรื่อง..." 
+                              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green resize-none"></textarea>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-full text-slate-600 font-medium text-xs hover:bg-slate-100 transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="bg-gradient-to-r from-brand-green to-emerald-600 hover:from-brand-greenDark hover:to-emerald-700 text-white font-medium px-5 py-2 rounded-full shadow-md shadow-emerald-200 text-xs flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-paper-plane text-brand-yellow"></i>
+                        บันทึกและเผยแพร่
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PLAYER MODAL -->
+    <div id="playerModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-slate-800 my-auto flex flex-col max-h-[92vh]">
+            
+            <!-- Video Container -->
+            <div class="relative bg-black aspect-video w-full flex items-center justify-center">
+                <div id="videoPlayerContainer" class="w-full h-full"></div>
+                <button onclick="closePlayerModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Video Info & Comments Section -->
+            <div class="p-5 overflow-y-auto flex-1 space-y-5 bg-white">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="playerGenreBadge" class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                                แนวหนัง
+                            </span>
+                            <span class="text-xs text-slate-400">•</span>
+                            <span id="playerDuration" class="text-xs text-slate-500 font-medium">
+                                <i class="fa-regular fa-clock mr-1"></i>00:00
+                            </span>
+                        </div>
+                        <h2 id="playerTitle" class="text-xl font-bold text-slate-800">ชื่อเรื่องหนังสั้น</h2>
+                        <p class="text-xs text-slate-500 mt-1">
+                            กำกับโดย: <span id="playerDirector" class="font-semibold text-slate-700">ผู้กำกับ</span>
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button id="likeBtn" onclick="toggleLike()" class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 hover:border-rose-300 text-xs font-semibold transition-all">
+                            <i id="likeIcon" class="fa-regular fa-heart text-rose-500 text-sm"></i>
+                            <span id="playerLikes">0</span>
+                        </button>
+                        <button onclick="shareFilm()" class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all">
+                            <i class="fa-solid fa-share-nodes"></i>
+                            แชร์
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Synopsis -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">เรื่องย่อ</h4>
+                    <p id="playerSynopsis" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                        รายละเอียดเรื่องย่อ...
+                    </p>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-regular fa-comments text-brand-green"></i> 
+                        ความคิดเห็น (<span id="commentCount">0</span>)
+                    </h4>
+
+                    <!-- Add Comment Input -->
+                    <div class="flex gap-2">
+                        <input type="text" id="commentInput" placeholder="แสดงความคิดเห็นเกี่ยวกับหนังสั้นเรื่องนี้..." 
+                               class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green focus:bg-white">
+                        <button onclick="addComment()" class="bg-brand-green hover:bg-brand-greenDark text-white px-4 py-2 rounded-full text-xs font-semibold transition-all">
+                            ส่ง
+                        </button>
+                    </div>
+
+                    <!-- Comment List -->
+                    <div id="commentsList" class="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                        <!-- Dynamic Comments -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-brand-green text-base"></i>
+        <span id="toastMessage">แจ้งเตือน</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Default Mock Data Films
+        let films = [
+            {
+                id: 1,
+                title: "ความทรงจำในขวดแก้ว",
+                genre: "drama",
+                genreLabel: "🎭 ดราม่า",
+                director: "ธนกฤต สายชล",
+                duration: "06:15",
+                views: 1240,
+                likes: 89,
+                isLiked: false,
+                poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                videoType: "embed",
+                synopsis: "เรื่องราวของชายหนุ่มที่พบกล่องจดหมายเก่าในบ้านสวน นำพาเขาย้อนกลับไปหาสัญญาในวัยเด็กที่ลืมเลือน",
+                comments: [
+                    { name: "ผู้ชม #102", text: "กำกับภาพสวยมากครับ อารมณ์ซึ้งสุดๆ", time: "2 ชม. ที่แล้ว" }
+                ]
+            },
+            {
+                id: 2,
+                title: "ผีหลอกตอนเที่ยงคืน",
+                genre: "horror",
+                genreLabel: "👻 สยองขวัญ",
+                director: "ทีมงาน GhostStudio",
+                duration: "04:45",
+                views: 3500,
+                likes: 240,
+                isLiked: false,
+                poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                videoType: "embed",
+                synopsis: "นักศึกษา 3 คนติดอยู่ในตึกคณะยามดึก กับเสียงลึกลับที่เดินตามก้าวต่อก้าว",
+                comments: [
+                    { name: "คุณลึกลับ", text: "ตกใจตอนนาทีที่ 3 มาก!", time: "5 ชม. ที่แล้ว" }
+                ]
+            },
+            {
+                id: 3,
+                title: "ยิ้มไว้โลกไม่แตก",
+                genre: "comedy",
+                genreLabel: "😂 ตลก",
+                director: "ก๊วนตลกฝึกหัด",
+                duration: "03:20",
+                views: 980,
+                likes: 112,
+                isLiked: false,
+                poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                videoType: "embed",
+                synopsis: "เมื่อหนุ่มพนักงานออฟฟิศเจอวันซวยที่สุดในชีวิต แต่ทุกอย่างกลับกลายเป็นเรื่องตลกสุดป่วน",
+                comments: []
+            }
+        ];
+
+        let activeCategory = 'all';
+        let activeFilmId = null;
+        let currentUploadTab = 'local';
+        let selectedFileBlobUrl = null;
+
+        // On Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderFilms();
+        });
+
+        // Render Films Grid Safely
+        function renderFilms() {
+            const grid = document.getElementById('filmsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchVal = (document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value || '').toLowerCase();
+
+            const filtered = films.filter(film => {
+                const matchCategory = activeCategory === 'all' || film.genre === activeCategory;
+                const matchSearch = film.title.toLowerCase().includes(searchVal) || film.director.toLowerCase().includes(searchVal);
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(film => {
+                const badgeType = film.videoType === 'local' 
+                    ? '<span class="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1"><i class="fa-solid fa-hard-drive"></i> ไฟล์ในเครื่อง</span>'
+                    : '<span class="bg-amber-400 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1"><i class="fa-solid fa-link"></i> ลิงก์วิดีโอ</span>';
+
+                return `
+                    <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-1">
+                        <!-- Poster Thumbnail Container -->
+                        <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" onclick="openPlayerModal(${film.id})">
+                            <img src="${film.poster}" alt="${film.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                            
+                            <!-- Play Button Overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-12 h-12 rounded-full bg-brand-green/90 text-white flex items-center justify-center text-lg shadow-lg transform group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-play ml-1"></i>
+                                </div>
+                            </div>
+
+                            <!-- Duration Tag -->
+                            <span class="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                ${film.duration}
+                            </span>
+
+                            <!-- Genre Tag -->
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                                ${film.genreLabel}
+                            </span>
+
+                            <!-- Video Source Badge -->
+                            <span class="absolute top-3 right-3">
+                                ${badgeType}
+                            </span>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 onclick="openPlayerModal(${film.id})" class="font-bold text-slate-800 text-base group-hover:text-brand-green transition-colors line-clamp-1 cursor-pointer">
+                                    ${film.title}
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                    <i class="fa-solid fa-user-ninja text-brand-green"></i> ${film.director}
+                                </p>
+                                <p class="text-xs text-slate-600 line-clamp-2 mt-2 leading-relaxed">
+                                    ${film.synopsis || 'ไม่มีเรื่องย่อ'}
+                                </p>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-500">
+                                <div class="flex items-center gap-3">
+                                    <span><i class="fa-regular fa-eye mr-1"></i>${film.views}</span>
+                                    <span class="${film.isLiked ? 'text-rose-500 font-semibold' : ''}">
+                                        <i class="${film.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-rose-500 mr-1"></i>${film.likes}
+                                    </span>
+                                </div>
+                                <button onclick="openPlayerModal(${film.id})" class="text-brand-green hover:text-brand-greenDark font-bold flex items-center gap-1">
+                                    รับชม <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Category Filter
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 transition-all";
+            });
+
+            const activeBtn = document.getElementById(`btn-${cat}`);
+            if (activeBtn) {
+                activeBtn.className = "category-btn active px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-brand-green text-white shadow-sm transition-all";
+            }
+            renderFilms();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            filterCategory('all');
+        }
+
+        function handleSearch() {
+            renderFilms();
+        }
+        function handleMobileSearch() {
+            renderFilms();
+        }
+
+        // Switch Upload Tabs
+        function switchUploadTab(mode) {
+            currentUploadTab = mode;
+            const tabLocal = document.getElementById('tabLocal');
+            const tabUrl = document.getElementById('tabUrl');
+            const localSec = document.getElementById('localUploadSection');
+            const urlSec = document.getElementById('urlUploadSection');
+
+            if (mode === 'local') {
+                tabLocal.className = "py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm";
+                tabUrl.className = "py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700";
+                localSec.classList.remove('hidden');
+                urlSec.classList.add('hidden');
+            } else {
+                tabUrl.className = "py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-amber-700 shadow-sm";
+                tabLocal.className = "py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700";
+                urlSec.classList.remove('hidden');
+                localSec.classList.add('hidden');
+            }
+        }
+
+        // Handle File Select (Local Device)
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('video/')) {
+                showToast('กรุณาเลือกไฟล์วิดีโอเท่านั้น');
+                return;
+            }
+
+            if (selectedFileBlobUrl) {
+                URL.revokeObjectURL(selectedFileBlobUrl);
+            }
+            selectedFileBlobUrl = URL.createObjectURL(file);
+
+            // Auto calculate duration
+            const tempVid = document.createElement('video');
+            tempVid.preload = 'metadata';
+            tempVid.src = selectedFileBlobUrl;
+            tempVid.onloadedmetadata = function() {
+                const mins = Math.floor(tempVid.duration / 60);
+                const secs = Math.floor(tempVid.duration % 60);
+                document.getElementById('filmDuration').value = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            document.getElementById('fileName').innerText = file.name;
+            document.getElementById('fileSize').innerText = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+            document.getElementById('uploadDropzone').classList.add('hidden');
+            document.getElementById('fileInfoBox').classList.remove('hidden');
+        }
+
+        function removeSelectedFile() {
+            if (selectedFileBlobUrl) {
+                URL.revokeObjectURL(selectedFileBlobUrl);
+                selectedFileBlobUrl = null;
+            }
+            document.getElementById('localVideoFile').value = '';
+            document.getElementById('uploadDropzone').classList.remove('hidden');
+            document.getElementById('fileInfoBox').classList.add('hidden');
+        }
+
+        // Open/Close Upload Modal
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+            document.getElementById('uploadForm').reset();
+            removeSelectedFile();
+            switchUploadTab('local');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Handle Submit Upload Form
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('filmTitle').value.trim();
+            const genre = document.getElementById('filmGenre').value;
+            const director = document.getElementById('filmDirector').value.trim();
+            const duration = document.getElementById('filmDuration').value.trim() || '03:00';
+            const synopsis = document.getElementById('filmSynopsis').value.trim();
+
+            let videoUrl = '';
+            let videoType = 'direct';
+
+            if (currentUploadTab === 'local') {
+                if (!selectedFileBlobUrl) {
+                    showToast('กรุณาเลือกไฟล์วิดีโอจากเครื่องของคุณ');
+                    return;
+                }
+                videoUrl = selectedFileBlobUrl;
+                videoType = 'local';
+            } else {
+                const rawUrl = document.getElementById('filmVideoUrl').value.trim();
+                if (!rawUrl) {
+                    showToast('กรุณาระบุลิงก์วิดีโอ');
+                    return;
+                }
+                const ytMatch = rawUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+                if (ytMatch && ytMatch[2].length === 11) {
+                    videoUrl = `https://www.youtube.com/embed/${ytMatch[2]}`;
+                    videoType = 'embed';
+                } else {
+                    videoUrl = rawUrl;
+                    videoType = 'direct';
+                }
+            }
+
+            const genreLabels = {
+                comedy: '😂 ตลก',
+                drama: '🎭 ดราม่า',
+                action: '💥 แอ็กชัน',
+                horror: '👻 สยองขวัญ',
+                romantic: '💖 โรแมนติก',
+                scifi: '🚀 ไซไฟ',
+                animation: '🎨 แอนิเมชัน'
+            };
+
+            const samplePosters = [
+                "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?auto=format&fit=crop&w=800&q=80"
+            ];
+
+            const newFilm = {
+                id: Date.now(),
+                title: title,
+                genre: genre,
+                genreLabel: genreLabels[genre] || '🎬 ทั่วไป',
+                director: director,
+                duration: duration,
+                views: 1,
+                likes: 0,
+                isLiked: false,
+                poster: samplePosters[Math.floor(Math.random() * samplePosters.length)],
+                videoUrl: videoUrl,
+                videoType: videoType,
+                synopsis: synopsis,
+                comments: []
+            };
+
+            films.unshift(newFilm);
+            
+            // Keep Blob ref in film object, reset state
+            selectedFileBlobUrl = null;
+
+            closeUploadModal();
+            renderFilms();
+            showToast('อัปโหลดหนังสั้นสำเร็จแล้ว! 🎉');
+        }
+
+        // Video Player Modal
+        function openPlayerModal(id) {
+            const film = films.find(f => f.id === id);
+            if (!film) return;
+
+            activeFilmId = id;
+            film.views += 1;
+
+            document.getElementById('playerTitle').innerText = film.title;
+            document.getElementById('playerGenreBadge').innerText = film.genreLabel;
+            document.getElementById('playerDuration').innerText = film.duration;
+            document.getElementById('playerDirector').innerText = film.director;
+            document.getElementById('playerSynopsis').innerText = film.synopsis || 'ไม่มีเรื่องย่อสำหรับหนังสั้นเรื่องนี้';
+            document.getElementById('playerLikes').innerText = film.likes;
+
+            updateLikeBtnUI(film.isLiked);
+
+            // Container Render Video
+            const playerBox = document.getElementById('videoPlayerContainer');
+            if (film.videoType === 'embed') {
+                playerBox.innerHTML = `<iframe class="w-full h-full" src="${film.videoUrl}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } else {
+                playerBox.innerHTML = `
+                    <video controls autoplay class="w-full h-full object-contain">
+                        <source src="${film.videoUrl}">
+                        เบราว์เซอร์ไม่รองรับการเล่นวิดีโอ
+                    </video>`;
+            }
+
+            renderCommentsUI(film.comments);
+
+            document.getElementById('playerModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderFilms();
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModal').classList.add('hidden');
+            document.getElementById('videoPlayerContainer').innerHTML = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Like Functionality
+        function toggleLike() {
+            if (!activeFilmId) return;
+            const film = films.find(f => f.id === activeFilmId);
+            if (!film) return;
+
+            film.isLiked = !film.isLiked;
+            film.likes += film.isLiked ? 1 : -1;
+
+            document.getElementById('playerLikes').innerText = film.likes;
+            updateLikeBtnUI(film.isLiked);
+            renderFilms();
+        }
+
+        function updateLikeBtnUI(isLiked) {
+            const btn = document.getElementById('likeBtn');
+            const icon = document.getElementById('likeIcon');
+            if (isLiked) {
+                btn.className = "flex items-center gap-1.5 px-4 py-2 rounded-full border border-rose-300 bg-rose-50 text-rose-600 text-xs font-semibold transition-all";
+                icon.className = "fa-solid fa-heart text-rose-500 text-sm";
+            } else {
+                btn.className = "flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 hover:border-rose-300 text-xs font-semibold transition-all";
+                icon.className = "fa-regular fa-heart text-rose-500 text-sm";
+            }
+        }
+
+        // Comments
+        function renderCommentsUI(comments) {
+            const list = document.getElementById('commentsList');
+            document.getElementById('commentCount').innerText = comments.length;
+
+            if (comments.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 italic py-2">ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>`;
+                return;
+            }
+
+            list.innerHTML = comments.map(c => `
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-700"><i class="fa-solid fa-circle-user text-brand-green mr-1"></i>${c.name}</span>
+                        <span class="text-[10px] text-slate-400">${c.time}</span>
+                    </div>
+                    <p class="text-slate-600 pl-4">${c.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const val = input.value.trim();
+            if (!val || !activeFilmId) return;
+
+            const film = films.find(f => f.id === activeFilmId);
+            if (!film) return;
+
+            film.comments.unshift({
+                name: "คุณ (ผู้ใช้งาน)",
+                text: val,
+                time: "เมื่อสักครู่"
+            });
+
+            input.value = '';
+            renderCommentsUI(film.comments);
+            showToast('เพิ่มความคิดเห็นแล้ว');
+        }
+
+        // Share
+        function shareFilm() {
+            showToast('คัดลอกลิงก์หนังสั้นไปยังคลิปบอร์ดแล้ว!');
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
